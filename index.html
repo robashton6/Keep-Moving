@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Keep Moving" />
+  <title>Keep Moving</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0A0A0A; --bg1: #111111; --bg2: #161616; --bg3: #1E1E1E;
+      --text: #F0EDE8; --text2: #AAAAAA; --text3: #555555;
+      --gold: #C5A55A; --green: #2D6A4F; --blue: #1B4F72; --purple: #6C3483;
+    }
+    body { background: var(--bg); color: var(--text); font-family: Georgia, serif; min-height: 100vh; overflow-x: hidden; }
+    .app { max-width: 480px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
+
+    .header { padding: 28px 20px 16px; border-bottom: 1px solid var(--bg3); }
+    .eyebrow { font-size: 10px; letter-spacing: 4px; color: var(--text3); text-transform: uppercase; margin-bottom: 6px; font-family: Arial, sans-serif; }
+    .title { font-size: 26px; font-weight: bold; }
+    .hdate { font-size: 12px; color: var(--text3); margin-top: 3px; font-family: Arial, sans-serif; }
+    .week-toggle { display: flex; gap: 8px; margin-top: 14px; }
+    .wbtn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--bg3); background: transparent; color: var(--text3); font-size: 11px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-family: Arial, sans-serif; }
+    .wbtn.on { border-color: var(--gold); background: rgba(197,165,90,0.1); color: var(--gold); }
+
+    nav { display: flex; overflow-x: auto; border-bottom: 1px solid var(--bg3); padding: 0 8px; scrollbar-width: none; }
+    nav::-webkit-scrollbar { display: none; }
+    .nbtn { padding: 12px 13px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text3); font-size: 11px; cursor: pointer; white-space: nowrap; font-family: Arial, sans-serif; }
+    .nbtn.on { border-bottom-color: var(--gold); color: var(--gold); }
+
+    .content { padding: 22px 18px 80px; flex: 1; }
+    .slabel { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--text3); margin-bottom: 16px; font-family: Arial, sans-serif; }
+
+    .pcard { background: var(--bg1); border-radius: 14px; padding: 18px; margin-bottom: 22px; display: flex; align-items: center; gap: 18px; border: 1px solid var(--bg3); }
+    .ring-wrap { position: relative; width: 66px; height: 66px; flex-shrink: 0; }
+    .ring-wrap svg { transform: rotate(-90deg); }
+    .ring-pct { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: var(--gold); font-family: Arial, sans-serif; }
+    .pinfo-title { font-size: 15px; font-weight: bold; }
+    .pinfo-sub { font-size: 12px; color: var(--text3); margin-top: 3px; font-family: Arial, sans-serif; }
+    .pinfo-sober { font-size: 12px; color: var(--gold); margin-top: 5px; font-family: Arial, sans-serif; }
+
+    .psec { margin-bottom: 22px; }
+    .plabel { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; font-family: Arial, sans-serif; }
+    .hrow { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--bg2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .hcheck { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #333; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; color: #fff; }
+    .hlabel { font-size: 13px; color: var(--text2); font-family: Arial, sans-serif; }
+    .hlabel.done { color: var(--text3); text-decoration: line-through; }
+
+    .scard { background: var(--bg1); border-radius: 14px; padding: 18px; margin-top: 8px; border: 1px solid var(--bg3); }
+    .scard-lbl { font-size: 12px; color: var(--text3); margin-bottom: 8px; font-family: Arial, sans-serif; }
+    .sdays { font-size: 36px; font-weight: bold; color: var(--gold); }
+    .sdays span { font-size: 15px; color: var(--text3); font-weight: normal; }
+    .rbtn { margin-top: 12px; padding: 8px 16px; background: var(--bg2); border: 1px solid var(--bg3); border-radius: 8px; color: var(--text3); font-size: 11px; cursor: pointer; font-family: Arial, sans-serif; }
+
+    .frow { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+    .fbtn { padding: 6px 12px; border-radius: 20px; border: 1px solid var(--bg3); background: transparent; color: var(--text3); font-size: 11px; cursor: pointer; font-family: Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    .trow { display: flex; gap: 7px; margin-bottom: 22px; }
+    .tbtn { flex: 1; padding: 7px 6px; border-radius: 8px; border: 1px solid var(--bg3); background: transparent; color: var(--text3); font-size: 10px; cursor: pointer; font-family: Arial, sans-serif; text-align: center; -webkit-tap-highlight-color: transparent; }
+    .tbtn.on { border-color: var(--gold); background: rgba(197,165,90,0.08); color: var(--gold); }
+    .gitem { display: flex; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--bg2); align-items: flex-start; }
+    .gdot { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+    .gtext { font-size: 13px; color: var(--text2); line-height: 1.5; font-family: Arial, sans-serif; }
+
+    .mrow { display: flex; gap: 14px; margin-bottom: 18px; align-items: flex-start; }
+    .mbadge { min-width: 50px; text-align: center; background: var(--bg1); border-radius: 8px; padding: 6px 4px; border: 1px solid var(--bg3); }
+    .mbadge-m { font-size: 9px; color: var(--gold); font-weight: bold; font-family: Arial, sans-serif; }
+    .mbadge-n { font-size: 20px; font-weight: bold; }
+    .mtext { font-size: 13px; color: var(--text2); line-height: 1.5; padding: 6px 0 18px; border-bottom: 1px solid var(--bg2); flex: 1; font-family: Arial, sans-serif; }
+    .fcard { background: rgba(197,165,90,0.07); border: 1px solid rgba(197,165,90,0.2); border-radius: 14px; padding: 20px; margin-top: 8px; }
+    .fcard-lbl { font-size: 11px; color: var(--gold); margin-bottom: 8px; letter-spacing: 2px; text-transform: uppercase; font-family: Arial, sans-serif; }
+    .fcard-txt { font-size: 15px; color: var(--text); line-height: 1.7; }
+
+    .mcard { background: var(--bg1); border-radius: 12px; padding: 14px 16px; margin-bottom: 9px; border: 1px solid var(--bg2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .mcard.done { background: #0C1A0C; border-color: rgba(45,106,79,0.3); }
+    .mcard-top { display: flex; justify-content: space-between; align-items: center; }
+    .mday { font-size: 10px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; font-family: Arial, sans-serif; }
+    .mprepped { font-size: 12px; color: var(--green); font-family: Arial, sans-serif; }
+    .mname { font-size: 16px; font-weight: bold; color: var(--text); margin-top: 5px; }
+    .mprep { font-size: 12px; color: var(--text3); margin-top: 4px; font-family: Arial, sans-serif; }
+    .ptip { background: var(--bg1); border-radius: 12px; padding: 16px; margin-top: 14px; border: 1px solid var(--bg2); }
+    .ptip-lbl { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-family: Arial, sans-serif; }
+    .ptip-txt { font-size: 13px; color: var(--text2); line-height: 1.6; font-family: Arial, sans-serif; }
+
+    .acat { margin-bottom: 22px; }
+    .acat-lbl { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; font-family: Arial, sans-serif; }
+    .crow { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--bg2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .cbox { width: 20px; height: 20px; border-radius: 4px; border: 2px solid #333; background: transparent; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; color: #fff; }
+    .clabel { font-size: 13px; color: var(--text2); font-family: Arial, sans-serif; }
+    .clabel.done { color: var(--text3); text-decoration: line-through; }
+
+    .ttype-lbl { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; margin-top: 4px; font-family: Arial, sans-serif; }
+    .tvcard { display: flex; align-items: center; gap: 12px; padding: 13px 15px; margin-bottom: 8px; background: var(--bg1); border-radius: 12px; border: 1px solid var(--bg2); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .tvcard.done { background: #0D111A; border-color: rgba(27,79,114,0.3); }
+    .tvcheck { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #333; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; color: #fff; }
+    .tvname { font-size: 14px; color: var(--text2); font-family: Arial, sans-serif; }
+    .tvname.done { color: var(--text3); }
+    .tvtime { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: Arial, sans-serif; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="eyebrow">Robert &middot; Torquay</div>
+    <div class="title">Keep Moving</div>
+    <div class="hdate" id="hdate"></div>
+    <div class="week-toggle">
+      <button class="wbtn on" id="btnSolo" onclick="setWeek('solo')">Solo Week</button>
+      <button class="wbtn" id="btnGirls" onclick="setWeek('girls')">Girls' Week</button>
+    </div>
+  </div>
+  <nav>
+    <button class="nbtn on" onclick="showTab('daily')">Today</button>
+    <button class="nbtn" onclick="showTab('goals')">Goals</button>
+    <button class="nbtn" onclick="showTab('milestones')">Milestones</button>
+    <button class="nbtn" onclick="showTab('girls')">Girls Week</button>
+    <button class="nbtn" onclick="showTab('apartment')">New Place</button>
+    <button class="nbtn" onclick="showTab('travel')">Travel</button>
+  </nav>
+  <div class="content" id="content"></div>
+</div>
+<script>
+var PILLARS = [
+  { id:'fatherhood', label:'Fatherhood',       icon:'F', color:'#2D6A4F' },
+  { id:'finances',   label:'Finances & Wealth', icon:'$', color:'#1B4F72' },
+  { id:'self',       label:'Self & Confidence', icon:'S', color:'#6C3483' },
+  { id:'health',     label:'Health & Fitness',  icon:'H', color:'#1A5276' },
+  { id:'sobriety',   label:'Sobriety',          icon:'*', color:'#C5A55A' }
+];
+
+var HABITS = {
+  fatherhood: [
+    { id:'f1', label:'Reached out to the girls today' },
+    { id:'f2', label:'Attended or confirmed sport this week' },
+    { id:'f3', label:'Kept my emotions in check around the kids' }
+  ],
+  finances: [
+    { id:'fn1', label:'Stuck to the budget today' },
+    { id:'fn2', label:'Tracked spending' },
+    { id:'fn3', label:'Put something toward savings' }
+  ],
+  self: [
+    { id:'s1', label:'Did something for my confidence today' },
+    { id:'s2', label:'Read today (finance, parenting, or fiction)' },
+    { id:'s3', label:'Leaned on a mate or made plans' }
+  ],
+  health: [
+    { id:'h1', label:'Hit the gym' },
+    { id:'h2', label:'Got in the water / surf session' },
+    { id:'h3', label:'Slept 7-8 hours' },
+    { id:'h4', label:'Morning routine done' }
+  ],
+  sobriety: [
+    { id:'sb1', label:'Alcohol free today' }
+  ]
+};
+
+var GOALS = {
+  fatherhood: {
+    short: [
+      'Tell the girls it is not their fault - with love and calm',
+      'Attend sport every week regardless of custody',
+      'Establish a warm stable routine during your weeks',
+      'Keep emotions regulated - do not spill onto them'
+    ],
+    medium: [
+      'Secure rental with a room for the girls',
+      'Noosa trip with the girls',
+      'Japan skiing trip - 10 days',
+      'Lock in the tradition of favourite meal nights'
+    ],
+    long: [
+      'Own home - girls have their own room at dads',
+      'Europe trip with the girls',
+      'America trip - Olympics, mates place',
+      'Italy - the big one',
+      'Kids cruise'
+    ]
+  },
+  finances: {
+    short: [
+      'Save $3,000 for investigator licence',
+      'Implement existing budget - no excuses',
+      'Land WorkSafe role',
+      'Save first and last month rental bond'
+    ],
+    medium: [
+      'Complete investigator licence (3-9 months)',
+      'Pay off car - no repayments ever again',
+      'Build 3-month emergency fund',
+      'Start share investing - first $5,000'
+    ],
+    long: [
+      '3 income streams: salary, investigation, shares',
+      '6-month emergency fund - parked and ticking',
+      '$100,000 investment portfolio outside super',
+      'Own property - first home',
+      'Private school fees covered comfortably (~$8k/year)'
+    ]
+  },
+  self: {
+    short: [
+      'Find local Toastmasters club and attend first session',
+      'Lean on Torquay mates - actually use them',
+      'Lock in morning routine and stick to it',
+      'Bali surf trip - already in motion'
+    ],
+    medium: [
+      'Eye contact and confidence with people - natural',
+      'Solo Europe trip - light pack, open itinerary',
+      'Solo America trip',
+      'Feel comfortable in your own skin again'
+    ],
+    long: [
+      'Feel proud of who you are - not who you were',
+      'Raise daughters who are proud of their dad',
+      'Confident, grounded, clear on who you are'
+    ]
+  },
+  health: {
+    short: [
+      'Maintain 5-6 gym sessions per week',
+      'Increase surf sessions significantly',
+      '7-8 hours sleep as a non-negotiable',
+      'Morning routine - up early every single day'
+    ],
+    medium: [
+      'Get in the best shape of your life',
+      'Visible body composition improvement',
+      'Surf performance - noticeably better in the water',
+      'Annual Bali surf trip locked in'
+    ],
+    long: [
+      'A body you are proud of - feel it and perform it',
+      'Regular surf trips - Bali annually as a minimum',
+      'Health as a lifelong discipline, not a phase'
+    ]
+  },
+  sobriety: {
+    short: [
+      'Track every day - honest streak count',
+      'Identify triggers and plan around them',
+      'Use structure and mates as support'
+    ],
+    medium: [
+      'Sobriety as a quiet foundation - not a daily fight',
+      'Clear head during girls weeks, always'
+    ],
+    long: [
+      'Alcohol does not define your social life',
+      'Your daughters see a clear-headed present dad'
+    ]
+  }
+};
+
+var MILESTONES = [
+  { m:1,  t:'Budget implemented. Saving actively. WorkSafe outcome known.' },
+  { m:2,  t:'$1,000 toward investigator licence saved.' },
+  { m:3,  t:'$3,000 licence fund hit. Rental search active.' },
+  { m:4,  t:'Investigator licence started. Toastmasters begun.' },
+  { m:6,  t:'Own rental secured. Girls have their room.' },
+  { m:9,  t:'Investigator licence complete. Service industry hours reducing.' },
+  { m:12, t:'Japan skiing trip with the girls. Emergency fund growing.' },
+  { m:18, t:'3 income streams active. Car paid off.' },
+  { m:24, t:'$100k investment journey underway. Financially stable.' },
+  { m:36, t:'Home ownership in sight. Girls proud. You are proud.' },
+  { m:60, t:'Financial freedom. Own home. Girls have their room. You made it.' }
+];
+
+var MEALS = [
+  { day:'Monday',    name:'Sausage pasta',         prep:'Cook pasta, slice sausages, pasta sauce, parmesan - prep Sunday night' },
+  { day:'Tuesday',   name:'Rissoles and veg',       prep:'Make rissoles night before, roast veg fresh' },
+  { day:'Wednesday', name:'Taco night',             prep:'Mince, taco shells, salsa, cheese, sour cream, lettuce' },
+  { day:'Thursday',  name:'Lasagna',                prep:'Make full lasagna Sunday - reheat Thursday' },
+  { day:'Friday',    name:'Takeaway night',         prep:'Girls choose - your night off cooking' },
+  { day:'Saturday',  name:'Sausages, salad and veg',prep:'BBQ or pan, fresh salad, roast or steamed veg' },
+  { day:'Sunday',    name:'Spaghetti bolognese',    prep:'Big batch - leftovers for Monday lunches' }
+];
+
+var APARTMENT = {
+  'Bedroom': [
+    { id:'a1', label:'Bed frame' }, { id:'a2', label:'Mattress' },
+    { id:'a3', label:'Pillows and linen' }, { id:'a4', label:'Wardrobe / clothes storage' }
+  ],
+  "Girls Room": [
+    { id:'g1', label:'Beds x2 or bunk bed' }, { id:'g2', label:'Mattresses x2' },
+    { id:'g3', label:'Girls linen and pillows' }, { id:'g4', label:'Storage for their stuff' },
+    { id:'g5', label:'Something on the walls - make it theirs' }
+  ],
+  'Kitchen': [
+    { id:'k1', label:'Fridge' }, { id:'k2', label:'Microwave' }, { id:'k3', label:'Toaster' },
+    { id:'k4', label:'Kettle' }, { id:'k5', label:'Pots and pans' }, { id:'k6', label:'Plates, bowls, cutlery' },
+    { id:'k7', label:'Chopping board and knives' }, { id:'k8', label:'Baking dish' }
+  ],
+  'Laundry': [
+    { id:'l1', label:'Washing machine (2nd hand fine)' }, { id:'l2', label:'Dryer (2nd hand fine)' },
+    { id:'l3', label:'Laundry basket' }, { id:'l4', label:'Washing powder' }
+  ],
+  'Living': [
+    { id:'lv1', label:'Couch' }, { id:'lv2', label:'TV' }, { id:'lv3', label:'TV unit / stand' },
+    { id:'lv4', label:'Coffee table' }, { id:'lv5', label:'Lamp or floor light' }
+  ],
+  'Bathroom': [
+    { id:'b1', label:'Towels (yours and girls)' }, { id:'b2', label:'Toiletries basket' },
+    { id:'b3', label:'Bath mat' }, { id:'b4', label:'Mirror if not included' }
+  ],
+  'General': [
+    { id:'gn1', label:'Vacuum cleaner' }, { id:'gn2', label:'Mop and bucket' },
+    { id:'gn3', label:'Iron and ironing board' }, { id:'gn4', label:'Bins kitchen and bathroom' },
+    { id:'gn5', label:'WiFi set up' }, { id:'gn6', label:'First aid kit' }
+  ]
+};
+
+var TRAVEL = [
+  { label:'Bali surf trip',            type:'Solo',  time:'Imminent' },
+  { label:'Annual surf trip',          type:'Solo',  time:'Ongoing' },
+  { label:'Europe - light pack solo',  type:'Solo',  time:'2-3 years' },
+  { label:'America - mates place',     type:'Solo',  time:'2-3 years' },
+  { label:'Noosa with the girls',      type:'Girls', time:'Near term' },
+  { label:'Japan skiing - 10 days',    type:'Girls', time:'Next year' },
+  { label:'Kids cruise',               type:'Girls', time:'3-4 years' },
+  { label:'America - Olympics',        type:'Girls', time:'4-5 years' },
+  { label:'Italy',                     type:'Girls', time:'5 years' }
+];
+
+// State
+var state = {
+  tab: 'daily',
+  week: ld('km_week','solo'),
+  habits: ld('km_habits',{}),
+  apt: ld('km_apt',{}),
+  meals: ld('km_meals',{}),
+  travel: ld('km_travel',{}),
+  sob: ld('km_sob', today()),
+  gp: 'fatherhood',
+  gt: 'short'
+};
+
+function today() { return new Date().toISOString().split('T')[0]; }
+function ld(k,d) { try { var v=localStorage.getItem(k); return v?JSON.parse(v):d; } catch(e){ return d; } }
+function sv(k,v) { try { localStorage.setItem(k,JSON.stringify(v)); } catch(e){} }
+function persist() {
+  sv('km_week',state.week); sv('km_habits',state.habits); sv('km_apt',state.apt);
+  sv('km_meals',state.meals); sv('km_travel',state.travel); sv('km_sob',state.sob);
+}
+
+function sobDays() {
+  return Math.max(0, Math.floor((new Date(today()) - new Date(state.sob)) / 86400000));
+}
+
+function todayH() { return state.habits[today()] || {}; }
+function totalH() { var t=0; PILLARS.forEach(function(p){ t+=HABITS[p.id].length; }); return t; }
+function doneH() { var th=todayH(), c=0; Object.keys(th).forEach(function(k){ if(th[k]) c++; }); return c; }
+function pct() { return Math.round(doneH()/totalH()*100); }
+
+function render() {
+  document.getElementById('hdate').textContent = new Date().toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('btnSolo').className = 'wbtn'+(state.week==='solo'?' on':'');
+  document.getElementById('btnGirls').className = 'wbtn'+(state.week==='girls'?' on':'');
+  document.querySelectorAll('.nbtn').forEach(function(b,i){
+    var tabs=['daily','goals','milestones','girls','apartment','travel'];
+    b.className='nbtn'+(state.tab===tabs[i]?' on':'');
+  });
+  var c=document.getElementById('content');
+  if(state.tab==='daily') c.innerHTML=rDaily();
+  else if(state.tab==='goals') c.innerHTML=rGoals();
+  else if(state.tab==='milestones') c.innerHTML=rMilestones();
+  else if(state.tab==='girls') c.innerHTML=rGirls();
+  else if(state.tab==='apartment') c.innerHTML=rApt();
+  else if(state.tab==='travel') c.innerHTML=rTravel();
+  attach();
+}
+
+function rDaily() {
+  var p=pct(), circ=2*Math.PI*28, off=circ*(1-p/100);
+  var h='<div class="pcard"><div class="ring-wrap"><svg width="66" height="66" viewBox="0 0 66 66">';
+  h+='<circle cx="33" cy="33" r="28" fill="none" stroke="#1E1E1E" stroke-width="6"/>';
+  h+='<circle cx="33" cy="33" r="28" fill="none" stroke="#C5A55A" stroke-width="6" stroke-dasharray="'+circ+'" stroke-dashoffset="'+off+'" stroke-linecap="round"/>';
+  h+='</svg><div class="ring-pct">'+p+'%</div></div>';
+  h+='<div><div class="pinfo-title">Today\'s habits</div>';
+  h+='<div class="pinfo-sub">'+doneH()+' of '+totalH()+' done</div>';
+  h+='<div class="pinfo-sober">'+sobDays()+' days sober</div></div></div>';
+
+  var th=todayH();
+  PILLARS.forEach(function(pi) {
+    h+='<div class="psec"><div class="plabel" style="color:'+pi.color+'">'+pi.label+'</div>';
+    HABITS[pi.id].forEach(function(hb) {
+      var done=!!th[hb.id];
+      h+='<div class="hrow" data-hid="'+hb.id+'">';
+      h+='<div class="hcheck" style="'+(done?'background:'+pi.color+';border-color:'+pi.color:'border-color:#333')+'">'+( done?'&check;':'')+'</div>';
+      h+='<span class="hlabel'+(done?' done':'')+'">'+hb.label+'</span></div>';
+    });
+    h+='</div>';
+  });
+
+  h+='<div class="scard"><div class="scard-lbl">Sobriety counter</div>';
+  h+='<div class="sdays">'+sobDays()+' <span>days</span></div>';
+  h+='<button class="rbtn" id="resetSob">Reset to today</button></div>';
+  return h;
+}
+
+function rGoals() {
+  var h='<div class="frow">';
+  PILLARS.forEach(function(p) {
+    var on=state.gp===p.id;
+    h+='<button class="fbtn" data-gp="'+p.id+'" style="'+(on?'border-color:'+p.color+';background:'+p.color+'22;color:'+p.color:'')+'">'+p.label+'</button>';
+  });
+  h+='</div><div class="trow">';
+  [['short','0-6 months'],['medium','1-2 years'],['long','3-5 years']].forEach(function(x){
+    h+='<button class="tbtn'+(state.gt===x[0]?' on':'')+'" data-gt="'+x[0]+'">'+x[1]+'</button>';
+  });
+  h+='</div>';
+  var lbl=state.gt==='short'?'Next 6 months':state.gt==='medium'?'1-2 years':'3-5 year vision';
+  h+='<div class="slabel">'+lbl+'</div>';
+  var col=PILLARS.filter(function(p){return p.id===state.gp;})[0].color;
+  (GOALS[state.gp][state.gt]||[]).forEach(function(g){
+    h+='<div class="gitem"><div class="gdot" style="background:'+col+'"></div><div class="gtext">'+g+'</div></div>';
+  });
+  return h;
+}
+
+function rMilestones() {
+  var h='<div class="slabel">Monthly milestones</div>';
+  MILESTONES.forEach(function(m){
+    h+='<div class="mrow"><div class="mbadge"><div class="mbadge-m">M</div><div class="mbadge-n">'+m.m+'</div></div>';
+    h+='<div class="mtext">'+m.t+'</div></div>';
+  });
+  h+='<div class="fcard"><div class="fcard-lbl">The finish line</div>';
+  h+='<div class="fcard-txt">Proud of who you are. Girls proud of you. Financially free.</div></div>';
+  return h;
+}
+
+function rGirls() {
+  var h='<div class="slabel">Girls week meal plan</div>';
+  MEALS.forEach(function(m,i){
+    var done=!!state.meals[i];
+    h+='<div class="mcard'+(done?' done':'')+'" data-meal="'+i+'">';
+    h+='<div class="mcard-top"><div class="mday">'+m.day+'</div>'+(done?'<div class="mprepped">&#10003; prepped</div>':'')+'</div>';
+    h+='<div class="mname">'+m.name+'</div><div class="mprep">'+m.prep+'</div></div>';
+  });
+  h+='<div class="ptip"><div class="ptip-lbl">The rule</div>';
+  h+='<div class="ptip-txt">Prep the night before. Cook once, be fully present during the meal - not stressed in the kitchen.</div></div>';
+  return h;
+}
+
+function rApt() {
+  var h='<div class="slabel">New place checklist</div>';
+  h+='<div style="font-size:12px;color:var(--text3);margin-bottom:20px;font-family:Arial,sans-serif;">Starting from scratch. Tick off as you go.</div>';
+  Object.keys(APARTMENT).forEach(function(cat){
+    var items=APARTMENT[cat];
+    var done=items.filter(function(i){return state.apt[i.id];}).length;
+    var all=done===items.length;
+    h+='<div class="acat"><div class="acat-lbl" style="color:'+(all?'#2D6A4F':'#C5A55A')+'"><span>'+cat+'</span><span>'+done+'/'+items.length+'</span></div>';
+    items.forEach(function(item){
+      var chk=!!state.apt[item.id];
+      h+='<div class="crow" data-apt="'+item.id+'">';
+      h+='<div class="cbox" style="'+(chk?'background:#2D6A4F;border-color:#2D6A4F':'border-color:#333')+'">'+( chk?'&check;':'')+'</div>';
+      h+='<span class="clabel'+(chk?' done':'')+'">'+item.label+'</span></div>';
+    });
+    h+='</div>';
+  });
+  return h;
+}
+
+function rTravel() {
+  var h='';
+  ['Solo','Girls'].forEach(function(type){
+    var col=type==='Solo'?'#6C3483':'#2D6A4F';
+    var lbl=type==='Solo'?'Solo adventures':'With the girls';
+    h+='<div class="ttype-lbl" style="color:'+col+'">'+lbl+'</div>';
+    TRAVEL.filter(function(t){return t.type===type;}).forEach(function(t,i){
+      var key=type+'-'+i, done=!!state.travel[key];
+      h+='<div class="tvcard'+(done?' done':'')+'" data-tv="'+key+'">';
+      h+='<div class="tvcheck" style="'+(done?'background:'+col+';border-color:'+col:'border-color:#333')+'">'+( done?'&check;':'')+'</div>';
+      h+='<div><div class="tvname'+(done?' done':'')+'">'+t.label+'</div>';
+      h+='<div class="tvtime">'+t.time+'</div></div></div>';
+    });
+    h+='<div style="margin-bottom:20px"></div>';
+  });
+  return h;
+}
+
+function attach() {
+  document.querySelectorAll('[data-hid]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var id=el.dataset.hid, d=today();
+      if(!state.habits[d]) state.habits[d]={};
+      state.habits[d][id]=!state.habits[d][id];
+      persist(); render();
+    });
+  });
+  var rb=document.getElementById('resetSob');
+  if(rb) rb.addEventListener('click', function(){ state.sob=today(); persist(); render(); });
+  document.querySelectorAll('[data-gp]').forEach(function(el){
+    el.addEventListener('click', function(){ state.gp=el.dataset.gp; render(); });
+  });
+  document.querySelectorAll('[data-gt]').forEach(function(el){
+    el.addEventListener('click', function(){ state.gt=el.dataset.gt; render(); });
+  });
+  document.querySelectorAll('[data-meal]').forEach(function(el){
+    el.addEventListener('click', function(){ var i=el.dataset.meal; state.meals[i]=!state.meals[i]; persist(); render(); });
+  });
+  document.querySelectorAll('[data-apt]').forEach(function(el){
+    el.addEventListener('click', function(){ var id=el.dataset.apt; state.apt[id]=!state.apt[id]; persist(); render(); });
+  });
+  document.querySelectorAll('[data-tv]').forEach(function(el){
+    el.addEventListener('click', function(){ var k=el.dataset.tv; state.travel[k]=!state.travel[k]; persist(); render(); });
+  });
+}
+
+function showTab(t) { state.tab=t; render(); }
+function setWeek(w) { state.week=w; persist(); render(); }
+
+render();
+</script>
+</body>
+</html>
