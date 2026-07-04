@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Keep Moving</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A0A0A;
+      --bg1: #111111;
+      --bg2: #161616;
+      --bg3: #1E1E1E;
+      --text: #F0EDE8;
+      --text2: #AAAAAA;
+      --text3: #555555;
+      --gold: #C5A55A;
+      --green: #2D6A4F;
+      --blue: #1B4F72;
+      --purple: #6C3483;
+      --teal: #1A5276;
+      --brown: #784212;
+      --border: #1E1E1E;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .header {
+      padding: 28px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-eyebrow {
+      font-size: 10px;
+      letter-spacing: 4px;
+      color: var(--text3);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-family: 'Arial', sans-serif;
+    }
+    .header-title {
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+    }
+    .header-date {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 3px;
+      font-family: 'Arial', sans-serif;
+    }
+    .week-toggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .week-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--bg3);
+      background: transparent;
+      color: var(--text3);
+      font-size: 11px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+      transition: all 0.2s;
+    }
+    .week-btn.active {
+      border-color: var(--gold);
+      background: rgba(197,165,90,0.1);
+      color: var(--gold);
+    }
+
+    /* NAV */
+    .nav {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      padding: 0 8px;
+      scrollbar-width: none;
+      flex-shrink: 0;
+    }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav-btn {
+      padding: 12px 13px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text3);
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+      font-family: 'Arial', sans-serif;
+      transition: all 0.2s;
+    }
+    .nav-btn.active {
+      border-bottom-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* CONTENT */
+    .content {
+      padding: 22px 18px 80px;
+      flex: 1;
+    }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 16px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* DAILY TAB */
+    .progress-card {
+      background: var(--bg1);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      border: 1px solid var(--bg3);
+    }
+    .progress-ring-wrap {
+      position: relative;
+      width: 66px;
+      height: 66px;
+      flex-shrink: 0;
+    }
+    .progress-ring-wrap svg { transform: rotate(-90deg); }
+    .progress-pct {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--gold);
+      font-family: 'Arial', sans-serif;
+    }
+    .progress-info-title {
+      font-size: 15px;
+      font-weight: bold;
+    }
+    .progress-info-sub {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 3px;
+      font-family: 'Arial', sans-serif;
+    }
+    .progress-sober {
+      font-size: 12px;
+      color: var(--gold);
+      margin-top: 5px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .pillar-section { margin-bottom: 22px; }
+    .pillar-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Arial', sans-serif;
+    }
+    .habit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--bg2);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .habit-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--bg3);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+      font-size: 11px;
+      color: #fff;
+    }
+    .habit-label {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.4;
+      font-family: 'Arial', sans-serif;
+      transition: all 0.15s;
+    }
+    .habit-label.done {
+      color: var(--text3);
+      text-decoration: line-through;
+    }
+
+    .sobriety-card {
+      background: var(--bg1);
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 8px;
+      border: 1px solid var(--bg3);
+    }
+    .sobriety-card-label {
+      font-size: 12px;
+      color: var(--text3);
+      margin-bottom: 8px;
+      font-family: 'Arial', sans-serif;
+    }
+    .sobriety-days {
+      font-size: 36px;
+      font-weight: bold;
+      color: var(--gold);
+    }
+    .sobriety-days span {
+      font-size: 15px;
+      color: var(--text3);
+      font-weight: normal;
+    }
+    .reset-btn {
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: var(--bg2);
+      border: 1px solid var(--bg3);
+      border-radius: 8px;
+      color: var(--text3);
+      font-size: 11px;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* GOALS TAB */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--bg3);
+      background: transparent;
+      color: var(--text3);
+      font-size: 11px;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .timeline-row {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 22px;
+    }
+    .timeline-btn {
+      flex: 1;
+      padding: 7px 6px;
+      border-radius: 8px;
+      border: 1px solid var(--bg3);
+      background: transparent;
+      color: var(--text3);
+      font-size: 10px;
+      cursor: pointer;
+      font-family: 'Arial', sans-serif;
+      transition: all 0.2s;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .timeline-btn.active {
+      border-color: var(--gold);
+      background: rgba(197,165,90,0.08);
+      color: var(--gold);
+    }
+    .goal-item {
+      display: flex;
+      gap: 13px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--bg2);
+      align-items: flex-start;
+    }
+    .goal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+    .goal-text {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* MILESTONES TAB */
+    .milestone-row {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 18px;
+      align-items: flex-start;
+    }
+    .milestone-badge {
+      min-width: 50px;
+      text-align: center;
+      background: var(--bg1);
+      border-radius: 8px;
+      padding: 6px 4px;
+      border: 1px solid var(--bg3);
+    }
+    .milestone-badge-m {
+      font-size: 9px;
+      color: var(--gold);
+      font-weight: bold;
+      font-family: 'Arial', sans-serif;
+      letter-spacing: 1px;
+    }
+    .milestone-badge-num {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .milestone-text {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.5;
+      padding-top: 6px;
+      border-bottom: 1px solid var(--bg2);
+      flex: 1;
+      padding-bottom: 18px;
+      font-family: 'Arial', sans-serif;
+    }
+    .finish-card {
+      background: rgba(197,165,90,0.07);
+      border: 1px solid rgba(197,165,90,0.2);
+      border-radius: 14px;
+      padding: 20px;
+      margin-top: 8px;
+    }
+    .finish-card-label {
+      font-size: 11px;
+      color: var(--gold);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+    }
+    .finish-card-text {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* GIRLS WEEK TAB */
+    .meal-card {
+      background: var(--bg1);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 9px;
+      border: 1px solid var(--bg2);
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .meal-card.done {
+      background: #0C1A0C;
+      border-color: rgba(45,106,79,0.3);
+    }
+    .meal-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .meal-day {
+      font-size: 10px;
+      color: var(--text3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: 'Arial', sans-serif;
+    }
+    .meal-prepped {
+      font-size: 12px;
+      color: var(--green);
+      font-family: 'Arial', sans-serif;
+    }
+    .meal-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--text);
+      margin-top: 5px;
+    }
+    .meal-prep {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 4px;
+      font-family: 'Arial', sans-serif;
+    }
+    .prep-tip {
+      background: var(--bg1);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+      border: 1px solid var(--bg2);
+    }
+    .prep-tip-label {
+      font-size: 11px;
+      color: var(--text3);
+      margin-bottom: 6px;
+      font-family: 'Arial', sans-serif;
+    }
+    .prep-tip-text {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* APARTMENT TAB */
+    .apartment-category { margin-bottom: 22px; }
+    .apartment-cat-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-family: 'Arial', sans-serif;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--bg2);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 2px solid var(--bg3);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: #fff;
+      transition: all 0.15s;
+    }
+    .check-label {
+      font-size: 13px;
+      color: var(--text2);
+      font-family: 'Arial', sans-serif;
+      transition: all 0.15s;
+    }
+    .check-label.done {
+      color: var(--text3);
+      text-decoration: line-through;
+    }
+
+    /* TRAVEL TAB */
+    .travel-type-label {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      margin-top: 4px;
+      font-family: 'Arial', sans-serif;
+    }
+    .travel-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      margin-bottom: 8px;
+      background: var(--bg1);
+      border-radius: 12px;
+      border: 1px solid var(--bg2);
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .travel-card.done {
+      background: #0D111A;
+      border-color: rgba(27,79,114,0.3);
+    }
+    .travel-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--bg3);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: #fff;
+      transition: all 0.15s;
+    }
+    .travel-name {
+      font-size: 14px;
+      color: var(--text2);
+      font-family: 'Arial', sans-serif;
+      transition: color 0.15s;
+    }
+    .travel-name.done { color: var(--text3); }
+    .travel-timeline {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 2px;
+      font-family: 'Arial', sans-serif;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">Robert · Torquay</div>
+    <div class="header-title">Keep Moving</div>
+    <div class="header-date" id="headerDate"></div>
+    <div class="week-toggle">
+      <button class="week-btn active" id="btnSolo" onclick="setWeek('solo')">Solo Week</button>
+      <button class="week-btn" id="btnGirls" onclick="setWeek('girls')">Girls' Week</button>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showTab('daily')">Today</button>
+    <button class="nav-btn" onclick="showTab('goals')">Goals</button>
+    <button class="nav-btn" onclick="showTab('milestones')">Milestones</button>
+    <button class="nav-btn" onclick="showTab('girls')">Girls' Week</button>
+    <button class="nav-btn" onclick="showTab('apartment')">New Place</button>
+    <button class="nav-btn" onclick="showTab('travel')">Travel</button>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="content" id="content"></div>
+
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────────────────
+
+const PILLARS = [
+  { id: 'fatherhood', label: 'Fatherhood',        icon: '👨‍👧‍👧', color: '#2D6A4F' },
+  { id: 'finances',   label: 'Finances & Wealth',  icon: '📈',    color: '#1B4F72' },
+  { id: 'self',       label: 'Self & Confidence',  icon: '🧠',    color: '#6C3483' },
+  { id: 'health',     label: 'Health & Fitness',   icon: '🌊',    color: '#1A5276' },
+  { id: 'sobriety',   label: 'Sobriety',           icon: '🔥',    color: '#C5A55A' },
+];
+
+const DAILY_HABITS = {
+  fatherhood: [
+    { id: 'f1', label: 'Reached out to the girls today' },
+    { id: 'f2', label: 'Attended or confirmed sport this week' },
+    { id: 'f3', label: 'Kept my emotions in check around the kids' },
+  ],
+  finances: [
+    { id: 'fn1', label: 'Stuck to the budget today' },
+    { id: 'fn2', label: 'Tracked spending' },
+    { id: 'fn3', label: 'Put something toward savings' },
+  ],
+  self: [
+    { id: 's1', label: 'Did something for my confidence today' },
+    { id: 's2', label: 'Read (finance, parenting, or fiction)' },
+    { id: 's3', label: 'Leaned on a mate or made plans' },
+  ],
+  health: [
+    { id: 'h1', label: 'Hit the gym' },
+    { id: 'h2', label: 'Got in the water / surf session' },
+    { id: 'h3', label: 'Slept 7–8 hours' },
+    { id: 'h4', label: 'Morning routine done' },
+  ],
+  sobriety: [
+    { id: 'sb1', label: 'Alcohol free today' },
+  ],
+};
+
+const GOALS = {
+  fatherhood: {
+    short: [
+      'Tell the girls it\'s not their fault — with love and calm',
+      'Attend sport every week regardless of custody',
+      'Establish a warm, stable routine during your weeks',
+      'Keep emotions regulated — don\'t spill onto them',
+    ],
+    medium: [
+      'Secure rental with a room for the girls',
+      'Noosa trip with the girls',
+      'Japan skiing trip — 10 days',
+      'Lock in the tradition of favourite meal nights',
+    ],
+    long: [
+      'Own home — girls have their own room at dad\'s',
+      'Europe trip with the girls',
+      'America trip — Olympics, mate\'s place',
+      'Italy — the big one',
+      'Kids cruise',
+    ],
+  },
+  finances: {
+    short: [
+      'Save $3,000 for investigator licence',
+      'Implement existing budget — no excuses',
+      'Land WorkSafe role',
+      'Save first/last month rental bond',
+    ],
+    medium: [
+      'Complete investigator licence (3–9 months)',
+      'Pay off car — no repayments ever again',
+      'Build 3-month emergency fund',
+      'Start share investing — first $5,000',
+    ],
+    long: [
+      '3 income streams: salary, investigation, shares',
+      '6-month emergency fund — parked and ticking',
+      '$100,000 investment portfolio outside super',
+      'Own property — first home',
+      'Private school fees covered comfortably (~$8k/year)',
+    ],
+  },
+  self: {
+    short: [
+      'Find local Toastmasters club and attend first session',
+      'Lean on Torquay mates — actually use them',
+      'Lock in morning routine and stick to it',
+      'Bali surf trip — already in motion',
+    ],
+    medium: [
+      'Eye contact and confidence with people — natural',
+      'Solo Europe trip — light pack, open itinerary',
+      'Solo America trip',
+      'Feel comfortable in your own skin again',
+    ],
+    long: [
+      'Feel proud of who you are — not who you were',
+      'Raise daughters who are proud of their dad',
+      'Confident, grounded, clear on who you are',
+    ],
+  },
+  health: {
+    short: [
+      'Maintain 5–6 gym sessions per week',
+      'Increase surf sessions significantly',
+      '7–8 hours sleep as a non-negotiable',
+      'Morning routine — up early every single day',
+    ],
+    medium: [
+      'Get in the best shape of your life',
+      'Visible body composition improvement',
+      'Surf performance — noticeably better in the water',
+      'Annual Bali surf trip locked in',
+    ],
+    long: [
+      'A body you\'re proud of — feel it and perform it',
+      'Regular surf trips — Bali annually as a minimum',
+      'Health as a lifelong discipline, not a phase',
+    ],
+  },
+  sobriety: {
+    short: [
+      'Track every day — honest streak count',
+      'Identify triggers and plan around them',
+      'Use structure and mates as support',
+    ],
+    medium: [
+      'Sobriety as a quiet foundation — not a daily fight',
+      'Clear head during girls\' weeks, always',
+    ],
+    long: [
+      'Alcohol doesn\'t define your social life',
+      'Your daughters see a clear-headed, present dad',
+    ],
+  },
+};
+
+const MONTHLY_MILESTONES = [
+  { month: 1,  label: 'Budget implemented. Saving actively. WorkSafe outcome known.' },
+  { month: 2,  label: '$1,000 toward investigator licence saved.' },
+  { month: 3,  label: '$3,000 licence fund hit. Rental search active.' },
+  { month: 4,  label: 'Investigator licence started. Toastmasters begun.' },
+  { month: 6,  label: 'Own rental secured. Girls have their room.' },
+  { month: 9,  label: 'Investigator licence complete. Service industry hours reducing.' },
+  { month: 12, label: 'Japan skiing trip with the girls. Emergency fund growing.' },
+  { month: 18, label: '3 income streams active. Car paid off.' },
+  { month: 24, label: '$100k investment journey underway. Financially stable.' },
+  { month: 36, label: 'Home ownership in sight. Girls proud. You\'re proud.' },
+  { month: 60, label: 'Financial freedom. Own home. Girls have their room. You made it.' },
+];
+
+const MEAL_PLAN = [
+  { day: 'Monday',    meal: 'Sausage pasta',          prep: 'Cook pasta, slice sausages, pasta sauce, parmesan — prep Sunday night' },
+  { day: 'Tuesday',   meal: 'Rissoles and veg',        prep: 'Make rissoles night before, roast veg fresh' },
+  { day: 'Wednesday', meal: 'Taco night',              prep: 'Mince, taco shells, salsa, cheese, sour cream, lettuce' },
+  { day: 'Thursday',  meal: 'Lasagna',                 prep: 'Make full lasagna Sunday — reheat Thursday' },
+  { day: 'Friday',    meal: '🎉 Takeaway night',       prep: 'Girls choose — their favourite, your night off cooking' },
+  { day: 'Saturday',  meal: 'Sausages, salad & veg',   prep: 'BBQ or pan, fresh salad, roast or steamed veg' },
+  { day: 'Sunday',    meal: 'Spaghetti bolognese',     prep: 'Big batch — leftovers for Monday lunches' },
+];
+
+const APARTMENT = {
+  'Bedroom': [
+    { id: 'a1', label: 'Bed frame' },
+    { id: 'a2', label: 'Mattress' },
+    { id: 'a3', label: 'Pillows & linen' },
+    { id: 'a4', label: 'Wardrobe / clothes storage' },
+  ],
+  "Girls' Room": [
+    { id: 'g1', label: 'Beds (x2) or bunk bed' },
+    { id: 'g2', label: 'Mattresses (x2)' },
+    { id: 'g3', label: "Girls' linen & pillows" },
+    { id: 'g4', label: 'Storage for their stuff' },
+    { id: 'g5', label: 'Something on the walls — make it theirs' },
+  ],
+  'Kitchen': [
+    { id: 'k1', label: 'Fridge' },
+    { id: 'k2', label: 'Microwave' },
+    { id: 'k3', label: 'Toaster' },
+    { id: 'k4', label: 'Kettle' },
+    { id: 'k5', label: 'Pots and pans (basics)' },
+    { id: 'k6', label: 'Plates, bowls, cutlery' },
+    { id: 'k7', label: 'Chopping board & knives' },
+    { id: 'k8', label: 'Baking dish (for lasagna etc)' },
+  ],
+  'Laundry': [
+    { id: 'l1', label: 'Washing machine (2nd hand fine)' },
+    { id: 'l2', label: 'Dryer (2nd hand fine)' },
+    { id: 'l3', label: 'Laundry basket' },
+    { id: 'l4', label: 'Washing powder' },
+  ],
+  'Living': [
+    { id: 'lv1', label: 'Couch' },
+    { id: 'lv2', label: 'TV' },
+    { id: 'lv3', label: 'TV unit / stand' },
+    { id: 'lv4', label: 'Coffee table' },
+    { id: 'lv5', label: 'Lamp or floor light' },
+  ],
+  'Bathroom': [
+    { id: 'b1', label: "Towels (yours + girls')" },
+    { id: 'b2', label: 'Toiletries basket' },
+    { id: 'b3', label: 'Bath mat' },
+    { id: 'b4', label: 'Mirror (if not included)' },
+  ],
+  'General': [
+    { id: 'gn1', label: 'Vacuum cleaner' },
+    { id: 'gn2', label: 'Mop & bucket' },
+    { id: 'gn3', label: 'Iron & ironing board' },
+    { id: 'gn4', label: 'Bins (kitchen + bathroom)' },
+    { id: 'gn5', label: 'WiFi set up' },
+    { id: 'gn6', label: 'First aid kit' },
+  ],
+};
+
+const TRAVEL = [
+  { label: 'Bali surf trip',          type: 'Solo',  timeline: 'Imminent' },
+  { label: 'Annual surf trip',         type: 'Solo',  timeline: 'Ongoing' },
+  { label: 'Europe — light pack, solo',type: 'Solo',  timeline: '2–3 years' },
+  { label: 'America — mate\'s place', type: 'Solo',  timeline: '2–3 years' },
+  { label: 'Noosa with the girls',     type: 'Girls', timeline: 'Near term' },
+  { label: 'Japan skiing — 10 days',   type: 'Girls', timeline: 'Next year' },
+  { label: 'Kids cruise',              type: 'Girls', timeline: '3–4 years' },
+  { label: 'America — Olympics',       type: 'Girls', timeline: '4–5 years' },
+  { label: 'Italy',                    type: 'Girls', timeline: '5 years' },
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+const todayKey = () => new Date().toISOString().split('T')[0];
+
+function load(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+}
+function save(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+
+let state = {
+  tab: 'daily',
+  week: load('km_week', 'solo'),
+  habits: load('km_habits', {}),
+  apartment: load('km_apartment', {}),
+  meals: load('km_meals', {}),
+  travel: load('km_travel', {}),
+  sobrietyStart: load('km_sobriety_start', todayKey()),
+  goalPillar: 'fatherhood',
+  goalTimeline: 'short',
+};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+function persist() {
+  save('km_week', state.week);
+  save('km_habits', state.habits);
+  save('km_apartment', state.apartment);
+  save('km_meals', state.meals);
+  save('km_travel', state.travel);
+  save('km_sobriety_start', state.sobrietyStart);
+}
+
+function sobrietyDays() {
+  return Math.floor((new Date(todayKey()) - new Date(state.sobrietyStart)) / 86400000);
+}
+
+function todayHabits() { return state.habits[todayKey()] || {}; }
+
+function totalHabits() { return Object.values(DAILY_HABITS).flat().length; }
+
+function completedHabits() {
+  const th = todayHabits();
+  return Object.values(th).filter(Boolean).length;
+}
+
+function dailyPct() { return Math.round((completedHabits() / totalHabits()) * 100); }
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+
+function render() {
+  // Date
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  // Week toggle
+  document.getElementById('btnSolo').className = 'week-btn' + (state.week === 'solo' ? ' active' : '');
+  document.getElementById('btnGirls').className = 'week-btn' + (state.week === 'girls' ? ' active' : '');
+
+  // Nav buttons
+  document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+    const tabs = ['daily','goals','milestones','girls','apartment','travel'];
+    btn.className = 'nav-btn' + (state.tab === tabs[i] ? ' active' : '');
+  });
+
+  // Content
+  const c = document.getElementById('content');
+  c.innerHTML = '';
+  if (state.tab === 'daily')      c.innerHTML = renderDaily();
+  if (state.tab === 'goals')      c.innerHTML = renderGoals();
+  if (state.tab === 'milestones') c.innerHTML = renderMilestones();
+  if (state.tab === 'girls')      c.innerHTML = renderGirls();
+  if (state.tab === 'apartment')  c.innerHTML = renderApartment();
+  if (state.tab === 'travel')     c.innerHTML = renderTravel();
+
+  attachEvents();
+}
+
+// ─── DAILY ────────────────────────────────────────────────────────────────────
+
+function renderDaily() {
+  const pct = dailyPct();
+  const circ = 2 * Math.PI * 28;
+  const offset = circ * (1 - pct / 100);
+
+  let html = `
+  <div class="progress-card">
+    <div class="progress-ring-wrap">
+      <svg width="66" height="66" viewBox="0 0 66 66">
+        <circle cx="33" cy="33" r="28" fill="none" stroke="#1E1E1E" stroke-width="6"/>
+        <circle cx="33" cy="33" r="28" fill="none" stroke="#C5A55A" stroke-width="6"
+          stroke-dasharray="${circ}" stroke-dashoffset="${offset}"
+          stroke-linecap="round" style="transition:stroke-dashoffset 0.4s"/>
+      </svg>
+      <div class="progress-pct">${pct}%</div>
+    </div>
+    <div>
+      <div class="progress-info-title">Today's habits</div>
+      <div class="progress-info-sub">${completedHabits()} of ${totalHabits()} done</div>
+      <div class="progress-sober">🔥 ${sobrietyDays()} days sober</div>
+    </div>
+  </div>`;
+
+  const th = todayHabits();
+  PILLARS.forEach(p => {
+    html += `<div class="pillar-section">
+      <div class="pillar-label" style="color:${p.color}">${p.icon} ${p.label}</div>`;
+    DAILY_HABITS[p.id].forEach(h => {
+      const done = !!th[h.id];
+      html += `<div class="habit-row" data-habit="${h.id}" data-pillar="${p.id}">
+        <div class="habit-check" style="${done ? `background:${p.color};border-color:${p.color}` : `border-color:#333`}">${done ? '✓' : ''}</div>
+        <span class="habit-label${done ? ' done' : ''}">${h.label}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `<div class="sobriety-card">
+    <div class="sobriety-card-label">Sobriety counter</div>
+    <div class="sobriety-days">${sobrietyDays()} <span>days</span></div>
+    <button class="reset-btn" id="resetSobriety">Reset to today</button>
+  </div>`;
+
+  return html;
+}
+
+// ─── GOALS ────────────────────────────────────────────────────────────────────
+
+function renderGoals() {
+  let html = `<div class="filter-row">`;
+  PILLARS.forEach(p => {
+    const active = state.goalPillar === p.id;
+    html += `<button class="filter-btn" data-gpillar="${p.id}"
+      style="${active ? `border-color:${p.color};background:${p.color}22;color:${p.color}` : ''}">${p.icon} ${p.label}</button>`;
+  });
+  html += `</div><div class="timeline-row">`;
+  [['short','0–6 months'],['medium','1–2 years'],['long','3–5 years']].forEach(([v,l]) => {
+    html += `<button class="timeline-btn${state.goalTimeline === v ? ' active' : ''}" data-gtimeline="${v}">${l}</button>`;
+  });
+  html += `</div>`;
+
+  const label = state.goalTimeline === 'short' ? 'Next 6 months' : state.goalTimeline === 'medium' ? '1–2 years' : '3–5 year vision';
+  html += `<div class="section-label">${label}</div>`;
+
+  const pillarColor = PILLARS.find(p => p.id === state.goalPillar)?.color || '#C5A55A';
+  (GOALS[state.goalPillar][state.goalTimeline] || []).forEach(g => {
+    html += `<div class="goal-item">
+      <div class="goal-dot" style="background:${pillarColor}"></div>
+      <div class="goal-text">${g}</div>
+    </div>`;
+  });
+
+  return html;
+}
+
+// ─── MILESTONES ───────────────────────────────────────────────────────────────
+
+function renderMilestones() {
+  let html = `<div class="section-label">Monthly milestones</div>`;
+  MONTHLY_MILESTONES.forEach(m => {
+    html += `<div class="milestone-row">
+      <div class="milestone-badge">
+        <div class="milestone-badge-m">M</div>
+        <div class="milestone-badge-num">${m.month}</div>
+      </div>
+      <div class="milestone-text">${m.label}</div>
+    </div>`;
+  });
+  html += `<div class="finish-card">
+    <div class="finish-card-label">The finish line</div>
+    <div class="finish-card-text">Proud of who you are. Girls proud of you. Financially free.</div>
+  </div>`;
+  return html;
+}
+
+// ─── GIRLS WEEK ───────────────────────────────────────────────────────────────
+
+function renderGirls() {
+  let html = `<div class="section-label">Girls' week meal plan</div>`;
+  MEAL_PLAN.forEach((m, i) => {
+    const done = !!state.meals[i];
+    html += `<div class="meal-card${done ? ' done' : ''}" data-meal="${i}">
+      <div class="meal-card-top">
+        <div class="meal-day">${m.day}</div>
+        ${done ? '<div class="meal-prepped">✓ prepped</div>' : ''}
+      </div>
+      <div class="meal-name">${m.meal}</div>
+      <div class="meal-prep">${m.prep}</div>
+    </div>`;
+  });
+  html += `<div class="prep-tip">
+    <div class="prep-tip-label">The rule</div>
+    <div class="prep-tip-text">Prep the night before. Cook once, be fully present during the meal — not stressed in the kitchen.</div>
+  </div>`;
+  return html;
+}
+
+// ─── APARTMENT ────────────────────────────────────────────────────────────────
+
+function renderApartment() {
+  let html = `<div class="section-label">New place checklist</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:20px;font-family:Arial,sans-serif;">Starting from scratch. Tick off as you go.</div>`;
+
+  Object.entries(APARTMENT).forEach(([cat, items]) => {
+    const done = items.filter(i => state.apartment[i.id]).length;
+    const allDone = done === items.length;
+    html += `<div class="apartment-category">
+      <div class="apartment-cat-label" style="color:${allDone ? '#2D6A4F' : '#C5A55A'}">
+        <span>${cat}</span><span>${done}/${items.length}</span>
+      </div>`;
+    items.forEach(item => {
+      const checked = !!state.apartment[item.id];
+      html += `<div class="check-row" data-apt="${item.id}">
+        <div class="check-box" style="${checked ? 'background:#2D6A4F;border-color:#2D6A4F' : 'border-color:#333'}">${checked ? '✓' : ''}</div>
+        <span class="check-label${checked ? ' done' : ''}">${item.label}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  return html;
+}
+
+// ─── TRAVEL ───────────────────────────────────────────────────────────────────
+
+function renderTravel() {
+  let html = '';
+  ['Solo','Girls'].forEach(type => {
+    const color = type === 'Solo' ? '#6C3483' : '#2D6A4F';
+    const label = type === 'Solo' ? 'Solo adventures' : 'With the girls';
+    html += `<div class="travel-type-label" style="color:${color}">${label}</div>`;
+    TRAVEL.filter(t => t.type === type).forEach((t, i) => {
+      const key = `${type}-${i}`;
+      const done = !!state.travel[key];
+      html += `<div class="travel-card${done ? ' done' : ''}" data-travel="${key}">
+        <div class="travel-check" style="${done ? `background:${color};border-color:${color}` : 'border-color:#333'}">${done ? '✓' : ''}</div>
+        <div>
+          <div class="travel-name${done ? ' done' : ''}">${t.label}</div>
+          <div class="travel-timeline">${t.timeline}</div>
+        </div>
+      </div>`;
+    });
+    html += `<div style="margin-bottom:20px"></div>`;
+  });
+  return html;
+}
+
+// ─── EVENTS ───────────────────────────────────────────────────────────────────
+
+function attachEvents() {
+  // Habits
+  document.querySelectorAll('[data-habit]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.habit;
+      const day = todayKey();
+      if (!state.habits[day]) state.habits[day] = {};
+      state.habits[day][id] = !state.habits[day][id];
+      persist(); render();
+    });
+  });
+
+  // Sobriety reset
+  const rb = document.getElementById('resetSobriety');
+  if (rb) rb.addEventListener('click', () => {
+    state.sobrietyStart = todayKey(); persist(); render();
+  });
+
+  // Goal pillar
+  document.querySelectorAll('[data-gpillar]').forEach(el => {
+    el.addEventListener('click', () => { state.goalPillar = el.dataset.gpillar; render(); });
+  });
+
+  // Goal timeline
+  document.querySelectorAll('[data-gtimeline]').forEach(el => {
+    el.addEventListener('click', () => { state.goalTimeline = el.dataset.gtimeline; render(); });
+  });
+
+  // Meals
+  document.querySelectorAll('[data-meal]').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = el.dataset.meal;
+      state.meals[i] = !state.meals[i];
+      persist(); render();
+    });
+  });
+
+  // Apartment
+  document.querySelectorAll('[data-apt]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.apt;
+      state.apartment[id] = !state.apartment[id];
+      persist(); render();
+    });
+  });
+
+  // Travel
+  document.querySelectorAll('[data-travel]').forEach(el => {
+    el.addEventListener('click', () => {
+      const key = el.dataset.travel;
+      state.travel[key] = !state.travel[key];
+      persist(); render();
+    });
+  });
+}
+
+// ─── GLOBAL CONTROLS ─────────────────────────────────────────────────────────
+
+function showTab(tab) { state.tab = tab; render(); }
+function setWeek(w) { state.week = w; persist(); render(); }
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+
+render();
+</script>
+</body>
+</html>
