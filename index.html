@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calisthenics Build - 4 Week Program</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:#080808;color:#f0ede8;font-family:-apple-system,system-ui,sans-serif;font-size:14px;min-height:100vh;}
+button{font-family:inherit;cursor:pointer;border:none;}
+input,textarea{font-family:inherit;}
+textarea{-webkit-appearance:none;border-radius:0;}
+.hero{padding:36px 18px 24px;text-align:center;border-bottom:1px solid #2a2a2a;background:linear-gradient(180deg,#111 0%,#080808 100%);}
+.hero-badge{display:inline-block;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#c9a84c;border:1px solid rgba(201,168,76,0.35);padding:5px 13px;margin-bottom:14px;}
+.hero-title{font-size:clamp(40px,11vw,68px);line-height:0.9;letter-spacing:1px;margin-bottom:4px;font-weight:700;}
+.hero-title span{color:#2a8fb0;}
+.hero-sub{font-size:11px;color:#6a6460;margin-top:12px;line-height:1.6;}
+.progress-wrap{padding:14px 18px 0;max-width:860px;margin:0 auto;}
+.progress-row{display:flex;justify-content:space-between;margin-bottom:7px;}
+.progress-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6a6460;}
+.progress-val{font-size:18px;color:#c9a84c;font-weight:700;}
+.progress-bar{height:3px;background:#2a2a2a;border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2a8fb0,#c9a84c);transition:width .5s;}
+.tabs{display:flex;overflow-x:auto;border-bottom:1px solid #2a2a2a;background:#111;position:sticky;top:0;z-index:50;-webkit-overflow-scrolling:touch;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:0 0 auto;padding:11px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#6a6460;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.tab.active{color:#2a8fb0;border-bottom-color:#2a8fb0;}
+.tab .cnt{margin-left:4px;font-size:9px;color:#c9a84c;}
+.main{max-width:860px;margin:0 auto;padding:18px;}
+.week-header{margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #2a2a2a;}
+.week-title{font-size:26px;color:#2a8fb0;letter-spacing:1px;font-weight:700;}
+.week-desc{font-size:11px;color:#6a6460;margin-top:4px;line-height:1.6;}
+.day-card{background:#111;border:1px solid #2a2a2a;margin-bottom:8px;}
+.day-card.done{border-color:rgba(42,143,176,0.4);}
+.day-header{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;}
+.day-num{font-size:22px;color:#2a2a2a;font-weight:700;min-width:32px;line-height:1;}
+.day-card.done .day-num{color:#2a8fb0;}
+.day-dow{font-size:9px;color:#6a6460;letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.day-title{font-size:13px;font-weight:500;margin-bottom:4px;}
+.day-meta{font-size:9px;color:#6a6460;}
+.day-chevron{font-size:11px;color:#6a6460;transition:transform .2s;flex-shrink:0;margin-left:auto;}
+.day-card.open .day-chevron{transform:rotate(180deg);}
+.day-body{display:none;border-top:1px solid #2a2a2a;}
+.day-card.open .day-body{display:block;}
+.section{padding:14px;border-bottom:1px solid #222;}
+.section-label{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.section-label span{font-size:9px;letter-spacing:2px;text-transform:uppercase;flex-shrink:0;}
+.section-label::after{content:'';flex:1;height:1px;background:#2a2a2a;}
+.ex-row{display:grid;grid-template-columns:22px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #222;align-items:start;}
+.ex-row:last-of-type{border-bottom:none;}
+.ex-check{width:20px;height:20px;border:1.5px solid #2a2a2a;border-radius:2px;background:none;color:transparent;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all .15s;cursor:pointer;}
+.ex-row.checked .ex-check{color:white;}
+.ex-row.checked .ex-name{text-decoration:line-through;color:#6a6460;}
+.ex-name{font-size:12px;font-weight:500;line-height:1.4;margin-bottom:2px;}
+.ex-detail{font-size:10px;color:#6a6460;font-style:italic;}
+.prog-tag{display:inline-block;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:1px 6px;margin-bottom:4px;border-radius:1px;}
+.coach-note{margin-top:10px;padding:9px 11px;border-left:2px solid #c9a84c;background:rgba(201,168,76,0.05);font-size:11px;color:#6a6460;line-height:1.6;}
+.km-banner{background:rgba(42,170,106,0.08);border-left:3px solid #2aaa6a;padding:10px 14px;margin-bottom:10px;}
+.km-num{font-size:22px;font-weight:700;color:#2aaa6a;line-height:1;}
+.km-lbl{font-size:10px;color:#6a6460;margin-top:2px;}
+.steps-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #222;}
+.steps-check{width:20px;height:20px;border:1.5px solid #2a2a2a;border-radius:2px;background:none;color:transparent;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s;}
+.steps-text{font-size:12px;font-weight:500;}
+.steps-sub{font-size:10px;color:#6a6460;margin-top:2px;}
+.parkrun-wrap{margin-top:10px;padding:10px 12px;background:rgba(201,168,76,0.08);border-left:2px solid #c9a84c;}
+.parkrun-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#c9a84c;margin-bottom:8px;font-weight:700;}
+.parkrun-input{width:90px;background:#181818;border:1px solid #2a2a2a;color:#f0ede8;font-size:12px;padding:5px 8px;outline:none;text-align:center;}
+.comments-textarea{width:100%;min-height:65px;background:#181818;border:1px solid #2a2a2a;color:#f0ede8;font-size:12px;line-height:1.6;padding:9px 11px;outline:none;resize:vertical;}
+.complete-btn{width:100%;padding:11px;background:transparent;border-top:1px solid #2a2a2a;color:#6a6460;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.day-card.done .complete-btn{color:#2a8fb0;background:rgba(42,143,176,0.1);}
+.guide-card{background:#111;border:1px solid #2a2a2a;padding:16px;margin-bottom:10px;}
+.guide-title{font-size:17px;color:#2a8fb0;margin-bottom:8px;font-weight:700;}
+.guide-body{font-size:12px;color:#6a6460;line-height:1.8;white-space:pre-line;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.stat-box{background:#111;border:1px solid #2a2a2a;padding:16px;text-align:center;}
+.stat-val{font-size:34px;color:#2a8fb0;line-height:1;font-weight:700;}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6a6460;margin-top:6px;}
+footer{text-align:center;padding:24px 18px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#3a3630;border-top:1px solid #2a2a2a;}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">Calisthenics Build - 4 Weeks</div>
+  <div class="hero-title">CALI<span>BUILD</span></div>
+  <div class="hero-sub">8 Movements / Push + Lower / Pull + Lower / 3 Runs / Park Run Saturdays / 10,000 Steps Daily</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-row">
+    <span class="progress-label">Overall Progress</span>
+    <span class="progress-val" id="prog-val">0 / 28 Days</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+</div>
+<div class="tabs" id="tabs"></div>
+<div class="main" id="main"></div>
+<footer>CaliBuild - 4 Weeks / 8 Movements / Data saves in your browser</footer>
+
+<script>
+// Week structure: 1=Mon workout A, 2=Tue workout B, 3=Wed run, 4=Thu workout A, 5=Fri workout B, 6=Sat parkrun, 7=Sun rest
+var DAY_TYPES={1:'workout_a',2:'workout_b',3:'run_easy',4:'workout_a',5:'workout_b',6:'parkrun',7:'rest'};
+var DOWS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var TYPE_COLORS={workout_a:'#2a8fb0',workout_b:'#c9a84c',run_easy:'#2aaa6a',parkrun:'#3d9a68',rest:'#6a6460'};
+
+function getDayType(d){return DAY_TYPES[((d-1)%7)+1];}
+function getWeek(d){return Math.ceil(d/7);}
+function getDow(d){return ((d-1)%7);}
+
+// Run km progression - carrying over from last program, starting at comfortable 3-4km
+var RUN_KM={run_easy:{1:3,2:3.5,3:4,4:4.5},parkrun:{1:5,2:5,3:5,4:5}};
+var WEEK_TOTAL_KM={1:11,2:12,3:13,4:14};
+
+function getRunDetail(type,week){
+  var easy={
+    1:'Walk 5 min warm-up. 3 min run / 1 min walk intervals. Easy conversational pace. Foot check after - note 0-10.',
+    2:'Walk 5 min. 3 min run / 1 min walk. Building on Week 1. Slightly further.',
+    3:'Walk 5 min. 4 min run / 1 min walk. 4km is solid base building toward the ultra.',
+    4:'Walk 5 min. 5 min run / 1 min walk. Final week - notice how this compares to Week 1.'
+  };
+  var park={
+    1:'Week 1 benchmark - run/walk the whole way. Log your time. Enjoy the run with your daughter. This is your 4-week comparison point.',
+    2:'Beat Week 1 time if the foot allows. Same run/walk strategy.',
+    3:'Third park run. Fitness should be showing. Metatarsal pad in, recovery sandals straight after.',
+    4:'Final benchmark. Compare to Week 1. 4 weeks of consistent work.'
+  };
+  return type==='run_easy'?(easy[week]||easy[1]):(park[week]||park[1]);
+}
+
+// Progressive sets and reps across 4 weeks
+// Week 1: 3x8, Week 2: 3x10, Week 3: 3x12, Week 4: 3x15
+function getSR(week){
+  var reps={1:8,2:10,3:12,4:15}[week]||8;
+  return '3x'+reps;
+}
+
+// Progression tags
+var PROG_COLORS={Beginner:'#2aaa6a',Intermediate:'#c9a84c',Advanced:'#d4784a'};
+
+// WORKOUT A - Push + Lower A (Mon/Thu)
+// Upper: Push-up progression + Pike/Shoulder Push-up
+// Lower: Squat + Split Squat
+function getWorkoutA(week){
+  var sr=getSR(week);
+  // Push-up progression by week
+  var pushup={
+    1:{name:'Push-Up - standard or knees',detail:sr+' - full range, chest to floor. Use knees if needed to maintain form.',prog:'Beginner'},
+    2:{name:'Push-Up - standard',detail:sr+' - strict form. If easy, elevate feet on chair for last set.',prog:'Beginner'},
+    3:{name:'Push-Up - feet elevated',detail:sr+' - feet on chair or step. Targets upper chest and shoulders more.',prog:'Intermediate'},
+    4:{name:'Push-Up - feet elevated + pause at bottom',detail:sr+' - 2 sec pause at bottom of each rep. Removes momentum, harder.',prog:'Intermediate'}
+  }[week]||{name:'Push-Up',detail:sr,prog:'Beginner'};
+
+  // Pike push-up progression
+  var pike={
+    1:{name:'Pike Push-Up',detail:sr+' - hips high in inverted V, lower head toward floor, push back up. Trains shoulder press pattern.',prog:'Beginner'},
+    2:{name:'Pike Push-Up - feet on chair',detail:sr+' - elevate feet to increase difficulty and angle. Closer to a handstand push-up.',prog:'Intermediate'},
+    3:{name:'Pike Push-Up - deep range',detail:sr+' - go as low as possible, touch top of head to floor if able.',prog:'Intermediate'},
+    4:{name:'Wall-Assisted Shoulder Push-Up',detail:'3x5 each side - one hand on wall, lean at angle, press away. Builds toward proper shoulder push-up.',prog:'Advanced'}
+  }[week]||{name:'Pike Push-Up',detail:sr,prog:'Beginner'};
+
+  // Squat progression
+  var squat={
+    1:{name:'Bodyweight Squat',detail:sr+' - feet shoulder width, squat to 90 degrees, drive through heels.',prog:'Beginner'},
+    2:{name:'KB Goblet Squat - 10kg',detail:sr+' - hold KB at chest, squat deep, elbows inside knees at bottom.',prog:'Beginner'},
+    3:{name:'KB Goblet Squat - 12kg',detail:sr+' - heavier load, same form. Pause 1 sec at bottom.',prog:'Intermediate'},
+    4:{name:'KB Goblet Squat - 12kg + pause',detail:sr+' - 3 sec pause at the bottom of every rep. Builds strength through full range.',prog:'Intermediate'}
+  }[week]||{name:'Bodyweight Squat',detail:sr,prog:'Beginner'};
+
+  // Split squat progression
+  var split={
+    1:{name:'Split Squat - bodyweight',detail:sr+' each leg - rear foot on floor. Front shin vertical, lower rear knee toward floor.',prog:'Beginner'},
+    2:{name:'Split Squat - KB in each hand 6kg',detail:sr+' each leg - add load, keep torso upright.',prog:'Beginner'},
+    3:{name:'Bulgarian Split Squat - rear foot elevated',detail:sr+' each leg - rear foot on chair or step. Much harder. Control the descent.',prog:'Intermediate'},
+    4:{name:'Bulgarian Split Squat - KB 10kg each hand',detail:sr+' each leg - weighted Bulgarian. One of the hardest single-leg movements.',prog:'Advanced'}
+  }[week]||{name:'Split Squat',detail:sr,prog:'Beginner'};
+
+  return {
+    title:'Workout A - Push + Lower',
+    note:'Push then lower. Rest 60 sec between sets. These four movements hit chest, shoulders, triceps, quads and glutes. Form beats reps every time.',
+    sections:[
+      {label:'Push - Upper Body',color:'#2a8fb0',exercises:[
+        {ex:pushup,id:'wa_pushup'},
+        {ex:pike,id:'wa_pike'},
+      ]},
+      {label:'Lower Body',color:'#e8c97a',exercises:[
+        {ex:squat,id:'wa_squat'},
+        {ex:split,id:'wa_split'},
+      ]},
+    ]
+  };
+}
+
+// WORKOUT B - Pull + Lower B (Tue/Fri)
+// Upper: Chin-up progression + Dip progression
+// Lower: KB Hinge/Deadlift + KB Single-leg work
+function getWorkoutB(week){
+  var sr=getSR(week);
+
+  // Chin-up progression
+  var chinup={
+    1:{name:'Chin-Up - assisted with resistance band or jumping',detail:sr+' - use band looped on bar for assistance, or jump up and lower slowly (5 sec down). Every slow lower builds pulling strength.',prog:'Beginner'},
+    2:{name:'Chin-Up - slow negative',detail:'3x5 - jump to top position, lower yourself in 5 seconds. Pure eccentric strength. Rest 90 sec between sets.',prog:'Beginner'},
+    3:{name:'Chin-Up - full reps',detail:'3x3-5 full reps. If you can only do 1-2, do those then finish with slow negatives.',prog:'Intermediate'},
+    4:{name:'Chin-Up - full reps + weighted if able',detail:'3x5 - if hitting 5 clean reps, hold 6kg KB between feet for 1-2 sets.',prog:'Intermediate'}
+  }[week]||{name:'Chin-Up',detail:sr,prog:'Beginner'};
+
+  // Dip progression
+  var dip={
+    1:{name:'Dip - feet on floor (assisted)',detail:sr+' - on dip bars with feet on chair or floor in front. Partial load.',prog:'Beginner'},
+    2:{name:'Dip - full bodyweight',detail:sr+' - full hang, lower until shoulders below elbows, press back up. Do not flare elbows wide.',prog:'Beginner'},
+    3:{name:'Dip - full + pause at bottom',detail:sr+' - 2 sec pause at bottom position. Removes bounce. Harder.',prog:'Intermediate'},
+    4:{name:'Dip - weighted if able',detail:'3x5-8 - hold 6kg KB between feet if full dips feel controlled. Otherwise 3x max reps.',prog:'Advanced'}
+  }[week]||{name:'Dip',detail:sr,prog:'Beginner'};
+
+  // KB Deadlift/Hinge progression
+  var hinge={
+    1:{name:'KB Sumo Deadlift - 12kg',detail:sr+' - wide stance, both hands on KB, hinge from hips, back flat. Feel the hamstrings load.',prog:'Beginner'},
+    2:{name:'KB Romanian Deadlift - 12kg',detail:sr+' - narrow stance, slight knee bend, push hips back, lower KB down legs. Hamstring stretch.',prog:'Beginner'},
+    3:{name:'KB Single-Leg RDL - 10kg',detail:sr+' each leg - hinge forward on one leg, KB hangs, feel the single-leg hamstring and glute load.',prog:'Intermediate'},
+    4:{name:'KB Single-Leg RDL - 12kg',detail:sr+' each leg - heavier load, same form. Use wall or dip bar for balance if needed.',prog:'Intermediate'}
+  }[week]||{name:'KB Deadlift',detail:sr,prog:'Beginner'};
+
+  // Seated good morning (posterior chain for scoliosis and running)
+  var goodmorning={
+    1:{name:'Seated Good Morning - bodyweight',detail:sr+' - sit on chair, hands behind head, hinge forward from hips, feel lower back and hamstrings, drive back up.',prog:'Beginner'},
+    2:{name:'Seated Good Morning - 6kg KB behind neck',detail:sr+' - light KB adds load. Keep back flat throughout.',prog:'Beginner'},
+    3:{name:'Seated Good Morning - 10kg KB behind neck',detail:sr+' - heavier. Slow and controlled, feel the posterior chain load.',prog:'Intermediate'},
+    4:{name:'Standing Good Morning - 10kg KB behind neck',detail:sr+' - progress to standing version. Hinge forward to parallel, drive hips through to stand.',prog:'Intermediate'}
+  }[week]||{name:'Seated Good Morning',detail:sr,prog:'Beginner'};
+
+  return {
+    title:'Workout B - Pull + Lower',
+    note:'Pull movements and hinge work. Chin-ups and dips build the upper body pulling and pushing strength. The hinge work directly supports running posture and protects the lower back.',
+    sections:[
+      {label:'Pull + Push - Upper Body',color:'#c9a84c',exercises:[
+        {ex:chinup,id:'wb_chinup'},
+        {ex:dip,id:'wb_dip'},
+      ]},
+      {label:'Hinge + Posterior Chain',color:'#2aaa6a',exercises:[
+        {ex:hinge,id:'wb_hinge'},
+        {ex:goodmorning,id:'wb_gm'},
+      ]},
+    ]
+  };
+}
+
+// Scoliosis - 3 daily exercises
+var SCOLIOSIS=[
+  {id:'sc_hang',  name:'TRX Hang or Chin-Up Bar Hang',detail:'3x30 sec - let spine decompress fully. Use chin-up bar now you have it.'},
+  {id:'sc_ttn',   name:'Thread the Needle - LEFT arm only',detail:'3x45 sec - on all fours, slide left arm under body, rotate thoracic against your curve.'},
+  {id:'sc_breath',name:'Left Side Rib Breathing',detail:'10 slow breaths - lie on left side, breathe deep, let left ribs sink on exhale.'},
+];
+
+// Post-run stretch (run days)
+var RUN_STRETCH=[
+  {id:'rs_cc',   name:'Cat-Cow',detail:'10 slow reps'},
+  {id:'rs_kneeX',name:'Right Knee Cross-Body Pull',detail:'60 sec - right knee toward left shoulder'},
+  {id:'rs_sideR',name:'Side Bend Stretch - RIGHT side only',detail:'60 sec - arm overhead, lean right'},
+  {id:'rs_hip',  name:'Hip Flexor Stretch',detail:'90 sec each side'},
+  {id:'rs_calf', name:'Calf + Achilles Stretch',detail:'45 sec each side'},
+  {id:'rs_ham',  name:'Hamstring Stretch',detail:'45 sec each side'},
+];
+
+// Storage
+function load(){try{return JSON.parse(localStorage.getItem('calibuild_v1')||'{}')}catch(e){return{}}}
+function save(s){try{localStorage.setItem('calibuild_v1',JSON.stringify(s))}catch(e){}}
+var S=load();
+if(!S.checked)S.checked={};
+if(!S.dayDone)S.dayDone={};
+if(!S.comments)S.comments={};
+if(!S.parkrunTimes)S.parkrunTimes={};
+
+function exKey(day,id){return 'd'+day+'_'+id;}
+
+function renderCheckRow(day,id,name,detail,accent,prog){
+  var key=exKey(day,id);
+  var checked=!!S.checked[key];
+  var div=document.createElement('div');
+  div.className='ex-row'+(checked?' checked':'');
+  div.id='cr-'+key;
+  var btn=document.createElement('button');
+  btn.className='ex-check';btn.innerHTML='&#10003;';
+  btn.style.borderColor=checked?accent:'#2a2a2a';
+  btn.style.background=checked?accent:'none';
+  btn.style.color=checked?'white':'transparent';
+  btn.onclick=function(){
+    S.checked[key]=!S.checked[key];save(S);
+    div.classList.toggle('checked',S.checked[key]);
+    btn.style.borderColor=S.checked[key]?accent:'#2a2a2a';
+    btn.style.background=S.checked[key]?accent:'none';
+    btn.style.color=S.checked[key]?'white':'transparent';
+  };
+  div.appendChild(btn);
+  var info=document.createElement('div');
+  if(prog){
+    var ptag=document.createElement('div');
+    ptag.className='prog-tag';
+    ptag.style.background='rgba(42,143,176,0.12)';
+    ptag.style.color=PROG_COLORS[prog]||'#2a8fb0';
+    ptag.textContent=prog;
+    info.appendChild(ptag);
+  }
+  var nm=document.createElement('div');nm.className='ex-name';nm.textContent=name;
+  info.appendChild(nm);
+  if(detail){var det=document.createElement('div');det.className='ex-detail';det.textContent=detail;info.appendChild(det);}
+  div.appendChild(info);
+  return div;
+}
+
+function sectionLabel(text,color){
+  var div=document.createElement('div');div.className='section-label';
+  var span=document.createElement('span');span.textContent=text;span.style.color=color;
+  div.appendChild(span);return div;
+}
+
+function coachNote(text,color){
+  var div=document.createElement('div');div.className='coach-note';
+  div.style.borderLeftColor=color||'#c9a84c';
+  var strong=document.createElement('strong');
+  strong.style.cssText='color:'+(color||'#c9a84c')+';font-style:normal;font-size:9px;letter-spacing:1px;text-transform:uppercase;';
+  strong.textContent='Coach';
+  var br=document.createElement('br');
+  var txt=document.createElement('span');txt.textContent=text;
+  div.appendChild(strong);div.appendChild(br);div.appendChild(txt);
+  return div;
+}
+
+function buildDayCard(day){
+  var type=getDayType(day);
+  var week=getWeek(day);
+  var isRun=type==='run_easy'||type==='parkrun';
+  var isParkrun=type==='parkrun';
+  var isWorkoutA=type==='workout_a';
+  var isWorkoutB=type==='workout_b';
+  var isRest=type==='rest';
+  var isDone=!!S.dayDone[day];
+  var color=TYPE_COLORS[type]||'#2a8fb0';
+  var dow=getDow(day);
+  var km=RUN_KM[type]?RUN_KM[type][week]:0;
+
+  var typeLabels={
+    workout_a:'Workout A - Push + Lower',
+    workout_b:'Workout B - Pull + Lower',
+    run_easy:'Wednesday - Easy Run',
+    parkrun:'Saturday - Park Run',
+    rest:'Sunday - Rest'
+  };
+
+  var card=document.createElement('div');
+  card.className='day-card'+(isDone?' done':'');
+  card.id='card-'+day;
+
+  // Header
+  var hdr=document.createElement('div');hdr.className='day-header';
+  hdr.onclick=function(){card.classList.toggle('open');};
+  var numWrap=document.createElement('div');
+  var numEl=document.createElement('div');numEl.className='day-num';
+  numEl.style.color=isDone?color:'#2a2a2a';
+  numEl.textContent=String(day).padStart(2,'0');
+  var dowEl=document.createElement('div');dowEl.className='day-dow';dowEl.textContent=DOWS[dow];
+  numWrap.appendChild(numEl);numWrap.appendChild(dowEl);
+  var titleWrap=document.createElement('div');titleWrap.style.cssText='flex:1;min-width:0';
+  var titleEl=document.createElement('div');titleEl.className='day-title';titleEl.style.color=color;
+  titleEl.textContent=typeLabels[type]||'';
+  var metaEl=document.createElement('div');metaEl.className='day-meta';
+  var sr=getSR(week);
+  metaEl.textContent='Week '+week+(isRun?' - '+km+'km':(isRest?' - Rest':' - '+sr+' reps'));
+  titleWrap.appendChild(titleEl);titleWrap.appendChild(metaEl);
+  var chevron=document.createElement('div');chevron.className='day-chevron';chevron.innerHTML='&#9660;';
+  hdr.appendChild(numWrap);hdr.appendChild(titleWrap);hdr.appendChild(chevron);
+  card.appendChild(hdr);
+
+  var body=document.createElement('div');body.className='day-body';
+
+  // 10,000 STEPS - every day
+  var stepsec=document.createElement('div');stepsec.className='section';
+  stepsec.appendChild(sectionLabel('Daily Steps Goal','#6a6460'));
+  var strow=document.createElement('div');strow.className='steps-row';
+  var stkey=exKey(day,'steps_10k');
+  var stchecked=!!S.checked[stkey];
+  var stbtn=document.createElement('button');stbtn.className='steps-check';
+  stbtn.innerHTML='&#10003;';
+  stbtn.style.borderColor=stchecked?'#2aaa6a':'#2a2a2a';
+  stbtn.style.background=stchecked?'#2aaa6a':'none';
+  stbtn.style.color=stchecked?'white':'transparent';
+  stbtn.onclick=function(){
+    S.checked[stkey]=!S.checked[stkey];save(S);
+    stbtn.style.borderColor=S.checked[stkey]?'#2aaa6a':'#2a2a2a';
+    stbtn.style.background=S.checked[stkey]?'#2aaa6a':'none';
+    stbtn.style.color=S.checked[stkey]?'white':'transparent';
+    var st2=strow.querySelector('.steps-text');
+    if(st2)st2.style.textDecoration=S.checked[stkey]?'line-through':'none';
+  };
+  var stinfo=document.createElement('div');
+  var sttxt=document.createElement('div');sttxt.className='steps-text';
+  sttxt.textContent='10,000 Steps';
+  sttxt.style.textDecoration=stchecked?'line-through':'none';
+  var stsub=document.createElement('div');stsub.className='steps-sub';
+  stsub.textContent=isRun?'Run counts toward this - just top up the rest of the day':'Walking, incidental movement, deliberate walk if needed';
+  stinfo.appendChild(sttxt);stinfo.appendChild(stsub);
+  strow.appendChild(stbtn);strow.appendChild(stinfo);
+  stepsec.appendChild(strow);
+  body.appendChild(stepsec);
+
+  // RUN SESSION
+  if(isRun){
+    var rsec=document.createElement('div');rsec.className='section';
+    rsec.appendChild(sectionLabel(isParkrun?'Park Run - 5km':'Run Session',color));
+    var kmb=document.createElement('div');kmb.className='km-banner';
+    var knum=document.createElement('div');knum.className='km-num';knum.textContent=km+'km';
+    var klbl=document.createElement('div');klbl.className='km-lbl';
+    klbl.textContent=isParkrun?'Park Run - weekly benchmark - Week '+week+' total: ~'+WEEK_TOTAL_KM[week]+'km':'Easy run - Week '+week+' total: ~'+WEEK_TOTAL_KM[week]+'km';
+    kmb.appendChild(knum);kmb.appendChild(klbl);rsec.appendChild(kmb);
+    var rdesc=document.createElement('div');
+    rdesc.style.cssText='font-size:12px;color:#6a6460;line-height:1.6;margin-bottom:10px;';
+    rdesc.textContent=getRunDetail(type,week);
+    rsec.appendChild(rdesc);
+    var rcs=[
+      {id:'rc_wu',  name:'5 min walk warm-up',detail:''},
+      {id:'rc_met', name:'Metatarsal pad in right shoe',detail:'Behind ball of foot'},
+      {id:'rc_run', name:km+'km complete',detail:''},
+      {id:'rc_cd',  name:'5 min walk cool-down',detail:''},
+      {id:'rc_ice', name:'Ice right foot 15-20 min',detail:'Non-negotiable every run day'},
+      {id:'rc_oof', name:'Oofas sandals on straight after',detail:'Stay off bare feet on hard floors'},
+    ];
+    rcs.forEach(function(rc){rsec.appendChild(renderCheckRow(day,rc.id,rc.name,rc.detail,color,null));});
+    if(isParkrun){
+      var pw=document.createElement('div');pw.className='parkrun-wrap';
+      var pl=document.createElement('div');pl.className='parkrun-label';pl.textContent='Park Run Time - Week '+week;
+      pw.appendChild(pl);
+      var pr=document.createElement('div');pr.style.cssText='display:flex;align-items:center;gap:10px;';
+      var ptl=document.createElement('div');ptl.style.cssText='font-size:11px;color:#6a6460;flex:1;';ptl.textContent='Finish time (mm:ss):';
+      var pinp=document.createElement('input');
+      pinp.type='text';pinp.placeholder='e.g. 32:45';
+      pinp.className='parkrun-input';
+      pinp.value=S.parkrunTimes[week]||'';
+      pinp.oninput=function(e){S.parkrunTimes[week]=e.target.value;save(S);};
+      pr.appendChild(ptl);pr.appendChild(pinp);pw.appendChild(pr);
+      if(week>1&&S.parkrunTimes[1]){
+        var pc=document.createElement('div');pc.style.cssText='font-size:10px;color:#6a6460;margin-top:6px;';
+        pc.textContent='Week 1: '+S.parkrunTimes[1];pw.appendChild(pc);
+      }
+      rsec.appendChild(pw);
+    }
+    body.appendChild(rsec);
+    // Post-run stretch
+    var msec=document.createElement('div');msec.className='section';
+    msec.appendChild(sectionLabel('Post-Run Stretch (10 min)','#3d9a68'));
+    RUN_STRETCH.forEach(function(ex){rsec2=renderCheckRow(day,ex.id,ex.name,ex.detail,'#3d9a68',null);msec.appendChild(rsec2);});
+    body.appendChild(msec);
+  }
+
+  // WORKOUT A
+  if(isWorkoutA){
+    var wa=getWorkoutA(week);
+    wa.sections.forEach(function(sec){
+      var wsec=document.createElement('div');wsec.className='section';
+      wsec.appendChild(sectionLabel(sec.label,sec.color));
+      sec.exercises.forEach(function(item){
+        wsec.appendChild(renderCheckRow(day,item.id,item.ex.name,item.ex.detail,sec.color,item.ex.prog));
+      });
+      body.appendChild(wsec);
+    });
+    var wanote=document.createElement('div');wanote.className='section';
+    wanote.appendChild(coachNote(wa.note,'#2a8fb0'));
+    body.appendChild(wanote);
+  }
+
+  // WORKOUT B
+  if(isWorkoutB){
+    var wb=getWorkoutB(week);
+    wb.sections.forEach(function(sec){
+      var wsec=document.createElement('div');wsec.className='section';
+      wsec.appendChild(sectionLabel(sec.label,sec.color));
+      sec.exercises.forEach(function(item){
+        wsec.appendChild(renderCheckRow(day,item.id,item.ex.name,item.ex.detail,sec.color,item.ex.prog));
+      });
+      body.appendChild(wsec);
+    });
+    var wbnote=document.createElement('div');wbnote.className='section';
+    wbnote.appendChild(coachNote(wb.note,'#c9a84c'));
+    body.appendChild(wbnote);
+  }
+
+  // REST DAY
+  if(isRest){
+    var restSec=document.createElement('div');restSec.className='section';
+    restSec.appendChild(sectionLabel('Rest Day','#6a6460'));
+    restSec.appendChild(renderCheckRow(day,'rest_walk','Easy walk or surf','30-40 min optional - best active recovery','#6a6460',null));
+    restSec.appendChild(coachNote('Full rest. Surf if you can - zero foot load, full body work. The 10,000 steps goal still applies.','#6a6460'));
+    body.appendChild(restSec);
+  }
+
+  // SCOLIOSIS - every day
+  var ssec=document.createElement('div');ssec.className='section';
+  ssec.appendChild(sectionLabel('Scoliosis - Daily 5 Min','#c4603a'));
+  SCOLIOSIS.forEach(function(ex){
+    ssec.appendChild(renderCheckRow(day,ex.id,ex.name,ex.detail,'#7a3a2a',null));
+  });
+  ssec.appendChild(coachNote('Now you have the chin-up bar - use it for the hang instead of TRX. Dead hang is better than TRX hang for spinal decompression. Thread the needle LEFT arm only. Left rib breathing every single day.','#7a3a2a'));
+  body.appendChild(ssec);
+
+  // COMMENTS
+  var csec=document.createElement('div');csec.className='section';
+  csec.appendChild(sectionLabel('Notes','#6a6460'));
+  if(isRun){
+    var fh=document.createElement('div');fh.style.cssText='font-size:10px;color:#8b4a9c;margin-bottom:6px;';
+    fh.textContent='Log foot pain rating 0-10 after every run.';csec.appendChild(fh);
+  }
+  var ta=document.createElement('textarea');ta.className='comments-textarea';
+  ta.placeholder=isRun?'Foot pain (0-10), how run felt...':'How session felt, reps hit, anything to note...';
+  ta.value=S.comments[day]||'';
+  ta.oninput=function(e){S.comments[day]=e.target.value;save(S);};
+  csec.appendChild(ta);body.appendChild(csec);
+
+  // COMPLETE
+  var doneBtn=document.createElement('button');doneBtn.className='complete-btn';doneBtn.id='done-'+day;
+  doneBtn.textContent=isDone?'Complete - Day Done':'Mark Day Complete';
+  doneBtn.onclick=function(){
+    S.dayDone[day]=!S.dayDone[day];save(S);
+    card.classList.toggle('done',S.dayDone[day]);
+    doneBtn.textContent=S.dayDone[day]?'Complete - Day Done':'Mark Day Complete';
+    numEl.style.color=S.dayDone[day]?color:'#2a2a2a';
+    updateProgress();buildTabs();
+  };
+  body.appendChild(doneBtn);
+  card.appendChild(body);
+  return card;
+}
+
+var WEEKS=[];
+for(var w=1;w<=4;w++){
+  var days=[];
+  for(var d=1;d<=7;d++){days.push((w-1)*7+d);}
+  var descs={
+    1:'Week 1 - 3x8 reps. Establish movement patterns. First park run benchmark. Chin-ups: use band or slow negatives. All progressions start at beginner level.',
+    2:'Week 2 - 3x10 reps. Slight volume increase. Full bodyweight on dips. Feet elevated push-ups if Week 1 felt easy.',
+    3:'Week 3 - 3x12 reps. Intermediate progressions across all movements. First proper chin-up attempts. Bulgarian split squats begin.',
+    4:'Week 4 - 3x15 reps. Peak volume. Weighted variations where possible. Final park run benchmark vs Week 1.'
+  };
+  WEEKS.push({label:'Week '+w,days:days,desc:descs[w]||''});
+}
+
+var currentTab=0;
+
+function buildTabs(){
+  var container=document.getElementById('tabs');container.innerHTML='';
+  var allTabs=WEEKS.concat([{label:'Guide',days:[]},{label:'Stats',days:[]}]);
+  allTabs.forEach(function(wk,i){
+    var done=wk.days?wk.days.filter(function(d){return S.dayDone[d];}).length:0;
+    var div=document.createElement('div');div.className='tab'+(currentTab===i?' active':'');
+    div.textContent=wk.label;
+    if(done>0&&wk.days&&wk.days.length){
+      var cnt=document.createElement('span');cnt.className='cnt';cnt.textContent=done+'/'+wk.days.length;div.appendChild(cnt);
+    }
+    div.onclick=function(){currentTab=i;buildTabs();buildContent();};
+    container.appendChild(div);
+  });
+}
+
+function buildContent(){
+  var main=document.getElementById('main');main.innerHTML='';
+  if(currentTab<WEEKS.length){
+    var wk=WEEKS[currentTab];
+    var hdr=document.createElement('div');hdr.className='week-header';
+    var wt=document.createElement('div');wt.className='week-title';wt.textContent='WEEK '+(currentTab+1);
+    var wd=document.createElement('div');wd.className='week-desc';wd.textContent=wk.desc;
+    hdr.appendChild(wt);hdr.appendChild(wd);main.appendChild(hdr);
+    wk.days.forEach(function(day){main.appendChild(buildDayCard(day));});
+  } else if(currentTab===WEEKS.length){
+    buildGuide(main);
+  } else {
+    buildStats(main);
+  }
+}
+
+function buildGuide(main){
+  var hdr=document.createElement('div');hdr.className='week-header';
+  var wt=document.createElement('div');wt.className='week-title';wt.style.color='#6a6460';wt.textContent='GUIDE';
+  hdr.appendChild(wt);main.appendChild(hdr);
+  var cards=[
+    {title:'The 8 Movements',color:'#2a8fb0',body:'Push-Up: chest, shoulders, triceps - progresses from standard to elevated feet\nPike/Shoulder Push-Up: shoulder press pattern - progresses toward handstand push-up\nChin-Up: biceps, lats, back - starts with negatives, builds to weighted\nDip: chest, triceps, shoulders - starts assisted, builds to weighted\nSquat: quads, glutes - bodyweight to heavy KB goblet\nSplit Squat: single-leg strength, balance - builds to Bulgarian weighted\nHinge/Deadlift: hamstrings, glutes, lower back - builds to single-leg KB RDL\nSeated Good Morning: posterior chain, scoliosis support - builds to standing'},
+    {title:'The Progression System',color:'#c9a84c',body:'Week 1: 3 sets x 8 reps - Beginner variations. Build the pattern.\nWeek 2: 3 sets x 10 reps - Add reps. Intermediate variations begin.\nWeek 3: 3 sets x 12 reps - Harder variations across the board.\nWeek 4: 3 sets x 15 reps - Peak volume. Weighted additions where possible.\n\nEach exercise has its own weekly progression built in. The tag (Beginner / Intermediate / Advanced) shows where you are in the movement ladder.\n\nIf a variation is too hard: drop back one level. If too easy: go to next level early. The progressions are guidelines, not rules.'},
+    {title:'Chin-Up - Starting From Zero',color:'#c9a84c',body:'Most people cannot do a chin-up when they start. That is normal. Here is how to build it:\n\nWeek 1-2: Jumping chin-ups with slow negatives. Jump to the top position (chin over bar), then lower yourself as slowly as possible - aim for 5 seconds. This eccentric loading builds the pulling strength fast.\n\nWeek 3: Attempt 1-3 full chin-ups at the start of each set while fresh. Finish each set with slow negatives.\n\nWeek 4: Full chin-ups. 3 sets of as many as you can, rest 90 sec.\n\nIf you have a resistance band: loop it over the bar, stand in the loop, it gives you assisted lift. Use a thicker band for more assistance, thinner as you get stronger.'},
+    {title:'Dip Bar - How To Use It',color:'#2a8fb0',body:'The dip bar gives you two movements: dips and assisted push-up variations.\n\nFor dips: grip bars, arms straight, lower yourself until shoulders are below elbows (full range), press back up. Keep torso slightly forward for more chest involvement, upright for more tricep.\n\nDo not flare elbows out wide - keep them tracking back behind you.\n\nFor assisted dips (Week 1): place a chair in front, rest feet on it. This takes 30-40% of your bodyweight out of the movement.\n\nThe dip is one of the best upper body movements available without a gym. Master it.'},
+    {title:'Scoliosis - Daily 5 Min',color:'#c4603a',body:'Now you have the chin-up bar - use it for the hang. A dead hang from the chin-up bar is better than the TRX hang because you get true vertical traction on the spine.\n\nDead hang: arms straight, feet off floor or just off floor, let the spine decompress. 3x30 sec.\n\nThread the needle LEFT arm only: on all fours, slide left arm under body and rotate. Counteracts your right thoracic curve. 3x45 sec.\n\nLeft rib breathing: lie on left side, 10 slow deep breaths, let left ribs sink on exhale. Clinical scoliosis management.\n\n5 minutes. Every day including rest days.'},
+    {title:'10,000 Steps',color:'#2aaa6a',body:'10,000 steps is roughly 7-8km of walking depending on stride length. On run days your run already covers a significant portion of this.\n\nThe goal is daily movement - not just gym sessions. 10,000 steps combats the sedentary periods between training and directly supports fat loss, cardiovascular health, and recovery.\n\nPractical ways to hit it: walk to and from runs, take stairs, walk during lunch, evening walk with the kids, beach walk if near the coast in Torquay.\n\nDo not stress if you miss it occasionally. The habit over weeks matters more than perfection on any single day.'},
+    {title:'Morton\'s Neuroma on Run Days',color:'#8b4a9c',body:'Every run day:\n1. Metatarsal pad in right shoe - behind ball of foot\n2. K-tape if using\n3. Run at prescribed km\n4. Walk cool-down\n5. Ice right foot 15-20 min immediately after\n6. Oofas sandals on straight after\n7. Rate pain 0-10 in comments\n\n0-3: on track. 4-6: watch it. 7+: rest tomorrow.\n\nIf the foot flares two sessions in a row, cut km by 20% for one week before building again. The ultra is a year away - the long game matters.'},
+  ];
+  cards.forEach(function(c){
+    var card=document.createElement('div');card.className='guide-card';
+    var gt=document.createElement('div');gt.className='guide-title';gt.style.color=c.color;gt.textContent=c.title;
+    var gb=document.createElement('div');gb.className='guide-body';gb.textContent=c.body;
+    card.appendChild(gt);card.appendChild(gb);main.appendChild(card);
+  });
+}
+
+function buildStats(main){
+  var done=Object.values(S.dayDone).filter(Boolean).length;
+  var checked=Object.values(S.checked).filter(Boolean).length;
+  var steps=Object.entries(S.checked).filter(function(e){return e[0].indexOf('steps_10k')>-1&&e[1];}).length;
+  var hdr=document.createElement('div');hdr.className='week-header';
+  var wt=document.createElement('div');wt.className='week-title';wt.style.color='#6a6460';wt.textContent='YOUR STATS';
+  hdr.appendChild(wt);main.appendChild(hdr);
+  var grid=document.createElement('div');grid.className='stats-grid';
+  [{v:done,l:'Days Complete'},{v:28-done,l:'Days Remaining'},{v:steps,l:'10k Steps Days'},{v:Math.round((done/28)*100)+'%',l:'Complete'}]
+    .forEach(function(s){
+      var box=document.createElement('div');box.className='stat-box';
+      var sv=document.createElement('div');sv.className='stat-val';sv.textContent=s.v;
+      var sl=document.createElement('div');sl.className='stat-lbl';sl.textContent=s.l;
+      box.appendChild(sv);box.appendChild(sl);grid.appendChild(box);
+    });
+  main.appendChild(grid);
+  var hasTime=false;
+  for(var w=1;w<=4;w++){if(S.parkrunTimes[w])hasTime=true;}
+  if(hasTime){
+    var pcard=document.createElement('div');pcard.className='guide-card';
+    var pt=document.createElement('div');pt.className='guide-title';pt.style.color='#c9a84c';pt.textContent='Park Run Times';
+    pcard.appendChild(pt);
+    for(var wk=1;wk<=4;wk++){
+      if(S.parkrunTimes[wk]){
+        var pr=document.createElement('div');
+        pr.style.cssText='display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:12px;';
+        var pwl=document.createElement('span');pwl.style.color='#6a6460';pwl.textContent='Week '+wk;
+        var pvl=document.createElement('span');pvl.style.cssText='color:#c9a84c;font-weight:700;';pvl.textContent=S.parkrunTimes[wk];
+        pr.appendChild(pwl);pr.appendChild(pvl);pcard.appendChild(pr);
+      }
+    }
+    main.appendChild(pcard);
+  }
+}
+
+function updateProgress(){
+  var done=Object.values(S.dayDone).filter(Boolean).length;
+  document.getElementById('prog-val').textContent=done+' / 28 Days';
+  document.getElementById('prog-fill').style.width=(done/28*100)+'%';
+}
+
+buildTabs();buildContent();updateProgress();
+</script>
+</body>
+</html>
